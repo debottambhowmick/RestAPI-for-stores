@@ -5,11 +5,6 @@ import uuid
 app = Flask(__name__)
 
 
-# getting all stores information
-@app.get("/store")
-def get_stores():
-    return {"stores":list(stores.values())}
-
 # craete a store
 @app.post("/store")
 def create_store():
@@ -26,7 +21,29 @@ def create_store():
     stores[store_id] = store
     return store, 201
 
-# add item in the store
+# getting an individual store           
+@app.get("/store/<string:store_id>")
+def  get_store(store_id):
+        try: 
+            return stores[store_id]
+        except KeyError:
+            abort(404, message="Store not found!!" )
+
+# getting all stores information
+@app.get("/store")
+def get_stores():
+    return {"stores":list(stores.values())}
+
+# Deleteing a store
+@app.delete("/store/<string:store_id>")
+def delete_store(store_id):
+    try:
+        del stores[store_id]
+        return {"message":"Store Deleted !"}
+    except KeyError:
+        abort(404, message="Store not found.")
+
+# Create item in the store
 @app.post("/item")
 def create_item():
     item_data = request.get_json()
@@ -52,14 +69,6 @@ def create_item():
 def get_all_items():
     return {"items":list(items.values())}
 
-# getting an individual store           
-@app.get("/store/<string:store_id>")
-def  get_store(store_id):
-        try: 
-            return stores[store_id]
-        except KeyError:
-            abort(404, message="Store not found!!" )
-
 # get item
 @app.get("/item/<string:item_id>")
 def get_item(item_id):
@@ -77,6 +86,7 @@ def delete_item(item_id):
     except KeyError:
         abort(404, message="Item not found!!" )
 
+# Updating an item
 @app.put("/item/<string:item_id>")
 def update_item(item_id):
     item_data = request.get_json()

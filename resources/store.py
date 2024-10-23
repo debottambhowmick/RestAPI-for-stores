@@ -9,9 +9,10 @@ from schemas import StoreSchema
 blp = Blueprint("stores", __name__, description="Operations on stores") 
 
 
-# using flask method view we can craete a class whos methods routes to specific endpoints
+# using flask MethodView we can craete a class whos methods routes to specific endpoints
 @blp.route("/store/<string:store_id>") # This decorator made the connection between flask-smorest and flask method view
 class Store(MethodView):
+    @blp.response(200, StoreSchema)
     def get(self, store_id):
         try: 
             return stores[store_id]
@@ -29,10 +30,12 @@ class Store(MethodView):
 
 @blp.route("/store")
 class StoreList(MethodView):
+    @blp.response(200, StoreSchema(many=True))
     def get(self):
-        return {"stores":list(stores.values())}
+        return stores.values()
 
     @blp.arguments(StoreSchema)
+    @blp.response(201, StoreSchema)
     def post(self, store_data):
         
         for store in stores.values():
@@ -43,4 +46,4 @@ class StoreList(MethodView):
         store = {**store_data, "id":store_id}
         stores[store_id] = store
 
-        return store, 201
+        return store

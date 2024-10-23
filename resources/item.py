@@ -23,7 +23,7 @@ class Item(MethodView):
         except KeyError:
             abort(404, message="Item not found!!" )
 
-    def update(self, item_id):
+    def put(self, item_id):
         item_data = request.get_json()
         if "price" not in item_data or "name" not in item_data:
             abort(400, message="Bad request. Ensure 'price' and 'name' are included in the JSON payload.")

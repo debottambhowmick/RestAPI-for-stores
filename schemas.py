@@ -1,14 +1,17 @@
 from marshmallow import Schema, fields
 
 class PlainItemSchema(Schema):
-    id = fields.Str(dump_only=True)  
+    id = fields.Int(dump_only=True)  
     name = fields.Str(required=True) 
     price = fields.Float(required=True) 
 
-
 class PlainStoreSchema(Schema):
-    id = fields.Str(dump_only=True)
+    id = fields.Int(dump_only=True)
     name = fields.Str(required=True)  
+
+class PlainTagSchema(Schema):
+    id = fields.Int(dump_only=True)
+    name=fields.Str() # "Did not use required"
 
 class ItemUpdateSchema(Schema):
     name = fields.Str() 
@@ -21,7 +24,8 @@ class ItemSchema(PlainItemSchema):
  
 class StoreSchema(PlainStoreSchema):
     items = fields.List(fields.Nested(PlainItemSchema()), dump_only=True)
+    tags = fields.List(fields.Nested(PlainTagSchema()), dump_only=True)
        
-
-
-# so, now that we have got these schemas like i said, we are goin to use them for validating incomming data and for turning outgoing data into valid as per the schema.
+class TagSchema(PlainTagSchema):
+    store_id = fields.Int(load_only=True)# Removed "required-"
+    store = fields.Nested(PlainStoreSchema(), dump_only=True) 

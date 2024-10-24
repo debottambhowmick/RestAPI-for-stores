@@ -8,6 +8,8 @@ class ItemModel(db.Model): # This creates a mapping between each row in the tabl
     price = db.Column(db.Float(precision=2), unique=False, nullable=False)#float, not unique, can not be null
     store_id = db.Column(db.Integer,db.ForeignKey("stores.id"), unique=False, nullable=False)#Integer , not unique, can not be null
     store = db.relationship("StoreModel", back_populates="items") 
+    tags = db.relationship("TagModel", back_populates="items", secondary="item_tags")
+    
 
 
 

@@ -1,4 +1,3 @@
-from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 
@@ -12,7 +11,7 @@ blp = Blueprint("stores", __name__, description="Operations on stores")
 
 
 # using flask MethodView we can craete a class whos methods routes to specific endpoints
-@blp.route("/store/<string:store_id>") # This decorator made the connection between flask-smorest and flask method view
+@blp.route("/store/<int:store_id>") # This decorator made the connection between flask-smorest and flask method view
 class Store(MethodView):
     @blp.response(200, StoreSchema)
     def get(self, store_id):

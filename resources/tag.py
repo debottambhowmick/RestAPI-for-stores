@@ -1,4 +1,3 @@
-from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 
@@ -11,7 +10,7 @@ from schemas import TagSchema, PlainTagSchema, TagAndItemSchema
 blp = Blueprint("Tags", __name__, description="Operations on tags")
 
 #for creating a new tag in a store or retriving all the tags related to a store
-@blp.route("/store/<string:store_id>/tag")
+@blp.route("/store/<int:store_id>/tag")
 class TagsInStore(MethodView):
     @blp.response(200, TagSchema(many=True))
     def get(self, store_id):
@@ -63,7 +62,7 @@ class Tag(MethodView):
 
 
 # Link an item of a store with a tag from the same store, Unlike a tag from an item 
-@blp.route("/item/<string:item_id>/tag/<string:tag_id>")
+@blp.route("/item/<int:item_id>/tag/<int:tag_id>")
 class LinkTagsToItem(MethodView):
     
     @blp.response(201, TagSchema)

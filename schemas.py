@@ -33,8 +33,15 @@ class TagSchema(PlainTagSchema):
     items = fields.List(fields.Nested(PlainItemSchema(), dump_only=True))
 
 
-# for returning related items and tags we need this
+# for related items and tags we need this
 class TagAndItemSchema(Schema):
     message = fields.str()
     item = fields.Nested(ItemSchema)
     tag = fields.Nested(TagSchema)
+
+#for users login
+
+class UserSchema(Schema):
+    id = fields.Int(dump_only=True)
+    username = fields.Str(required=True)
+    password = fields.Str(required=True, load_only=True)

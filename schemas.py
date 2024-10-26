@@ -35,7 +35,7 @@ class TagSchema(PlainTagSchema):
 
 # for related items and tags we need this
 class TagAndItemSchema(Schema):
-    message = fields.str()
+    message = fields.Str()
     item = fields.Nested(ItemSchema)
     tag = fields.Nested(TagSchema)
 

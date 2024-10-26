@@ -5,6 +5,8 @@ from db import db
 from models import TagModel, StoreModel, ItemModel
 from sqlalchemy.exc import SQLAlchemyError
 
+from flask_jwt_extended import jwt_required
+
 from schemas import TagSchema, PlainTagSchema, TagAndItemSchema
 
 blp = Blueprint("Tags", __name__, description="Operations on tags")
@@ -12,12 +14,13 @@ blp = Blueprint("Tags", __name__, description="Operations on tags")
 #for creating a new tag in a store or retriving all the tags related to a store
 @blp.route("/store/<int:store_id>/tag")
 class TagsInStore(MethodView):
+    @jwt_required()
     @blp.response(200, TagSchema(many=True))
     def get(self, store_id):
         store = StoreModel.query.get_or_404(store_id)
 
         return store.tags.all()
-    
+    @jwt_required()
     @blp.arguments(TagSchema)
     @blp.response(201, TagSchema)
     def post(self, tag_data, store_id):
@@ -39,12 +42,14 @@ class TagsInStore(MethodView):
 @blp.route("/tag/<int:tag_id>")
 class Tag(MethodView):
     
+    @jwt_required()
     @blp.response(200, TagSchema)
     def get(self, tag_id):
         tag = TagModel.query.get_or_404(tag_id)
         return tag
 
     # some alternative responses added to tackle different scenarios
+    @jwt_required()
     @blp.response (202, description="Delete a tag if no item is tagged", example={"message":"Tag Deleted."})
     @blp.alt_response(404, description="Tag Not Found.")
     @blp.alt_response(400, description="Returned if the tag is linked to one or more items. In this case, the tag is not deleted.")
@@ -62,9 +67,11 @@ class Tag(MethodView):
 
 
 # Link an item of a store with a tag from the same store, Unlike a tag from an item 
+
 @blp.route("/item/<int:item_id>/tag/<int:tag_id>")
 class LinkTagsToItem(MethodView):
     
+    @jwt_required()
     @blp.response(201, TagSchema)
     def post(self, item_id, tag_id):
         item = ItemModel.query.get_or_404(item_id)
@@ -82,7 +89,7 @@ class LinkTagsToItem(MethodView):
             abort(500, message="AN error occured while linking the tag")
 
         return tag
-    
+    @jwt_required()
     @blp.response(200, TagAndItemSchema)
     def delete(self, item_id, tag_id):
         item = ItemModel.query.get_or_404(item_id)
